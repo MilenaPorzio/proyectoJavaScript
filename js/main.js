@@ -1,75 +1,143 @@
-const tienda = [
-    {
-        nombre: "Buzo mujer",
-        precio: 20000,
-        stock: 30,
-    },
-    {
-        nombre: "Buzo hombre",
-        precio: 25000,
-        stock: 34,
-    },
-    {
-        nombre: "Zapatillas mujer",
-        precio: 80000,
-        stock: 50,
-    },
-    {
-        nombre: "Zapatillas hombre",
-        precio: 8000,
-        stock: 64,
-    },
-    {
-        nombre: "Pantalon mujer",
-        precio: 40000,
-        stock: 37,
-    },
-    {
-        nombre: "Pantalon hombre",
-        precio: 42000,
-        stock: 79,
-    },
+class Producto {
+    constructor(nombre, precio, cantidad) {
+        this.nombre = nombre;
+        this.precio = precio;
+        this.cantidad = cantidad;
+}
+}
+
+function obtenerProductos() {
+    const productosCarrito = JSON.parse(localStorage.getItem("productos"));
+    if (productosCarrito) {
+        carrito = productosCarrito;
+    }
+    renderizarCarrito(carrito);
+}
+
+function guardarProductos() {
+    const json = JSON.stringify(carrito);
+    localStorage.setItem("productos", json);
+}
+
+function modificarCantidadProductos(productosCarrito, cantidad) {
+    const agregarProductosCarrito = carrito.findIndex((el) => {
+        return el.nombre === productoCarrito.nombre;
+    });
+    if (agregarProductosCarrito !== -1) {
+        carrito[agregarProductosCarrito].cantidad = cantidad;
+    }
+    renderizarCarrito(carrito);
+    guardarProductos();
+}
+
+function renderizarCarrito(carrito) {
+    tbodyCarrito.innerHTML = "";
+
+    for (const producto of carrito) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${producto.nombre}</td>
+            <td>$${producto.precio}</td>`;
+
+        const inputCantidad = document.createElement("input");
+        inputCantidad.type = "number";
+        inputCantidad.placeholder = "Cantidad";
+        inputCantidad.value = producto.cantidad;
+        inputCantidad.addEventListener("change", () => {
+            const cantidad = parseInt(inputCantidad.value);
+            modificarCantidadProductos(producto, cantidad);
+        });
+
+        const tdTotal = document.createElement("td");
+        tdTotal.innerText = `$${productosCarrito.precio * productosCarrito.cantidad}`;
+
+
+        const buttonBorrar = document.createElement("button");
+        buttonBorrar.innerText = "BORRAR";
+
+        buttonBorrar.addEventListener("click", () => {
+            eliminarDelCarrito(producto);
+        });
+
+        tr.append(inputCantidad, tdTotal, buttonBorrar);
+
+        tbodyCarrito.append(tr);
+    }
+}
+
+function eliminarDelCarrito(producto) {
+    const agregarProductosCarrito = carrito.findIndex((el) => {
+        return el.nombre === producto.nombre;
+    });
+    carrito.splice(agregarProductosCarrito, 1);
+    renderizarCarrito(carrito);
+    guardarProductos();
+}
+
+function agregarProductosAlCarrito(producto, cantidad) {
+    const agregarProductosCarrito = carrito.findIndex((el) => {
+        return el.nombre === producto.nombre;
+    });
+    if (agregarProductosCarrito === -1) {
+        carrito.push({
+            nombre: producto.nombre,
+            precio: producto.precio,
+            cantidad: cantidad,
+        });
+    } else {
+        carrito[agregarProductosCarrito].cantidad += cantidad;
+    }
+    renderizarCarrito(carrito);
+    guardarProductos();
+}
+
+function renderizarProductos(productos) {
+    contenedor.innerHTML = "";
+
+    for (const producto of productos) {
+        const div = document.createElement("div");
+        div.className = "producto";
+        div.innerHTML = `<h3>${producto.nombre}</h3>`;
+
+        const input = document.createElement("input");
+        input.placeholder = "Cantidad";
+        input.type = "number";
+
+        const button = document.createElement("button");
+        button.innerText = "Agregar";
+
+        button.addEventListener("click", () => {
+            const cantidad = parseInt(input.value);
+            agregarProductosAlCarrito(producto, cantidad);
+        });
+
+        div.append(input, button);
+        contenedor.append(div);
+    }
+}
+
+const contenedor = document.getElementById("contenedor");
+const tbodyCarrito = document.getElementById("carrito");
+
+const productos = [
+    new Producto("Buzo Mujer", 20000, 30),
+    new Producto("Buzo Hombre", 25000, 34),
+    new Producto("Zapatillas Mujer", 80000, 50),
+    new Producto("Zapatillas Hombre", 8000, 64),
+    new Producto("Pantalon Mujer", 40000, 37),
+    new Producto("Pantalon Hombre", 42000, 79)
 ];
 
 let carrito = [];
 
-const tiendaEntera = parseInt(prompt("Ingrese 1 para ver los productos de la tienda\nIngrese 2 para salir"));
+const bienvenida = parseInt(prompt("Bienvenido/a a nuestra tienda\nPara comprar ingrese 1\nPara salir ingrese 2"));
 
-if (tiendaEntera === 1) {
-    console.log(tienda);
-    const productosDeseados = prompt("Ingrese los nombres de los productos que quiere comprar, separados por coma sin espacios").split(",");
-
-    productosDeseados.forEach(producto => {
-        const encontrado = tienda.find(item => item.nombre === producto);
-        if (encontrado && encontrado.stock > 0) {
-            carrito.push(encontrado);
-            encontrado.stock;
-        }
-    });
+if (bienvenida === 1) {
+    console.log("Gracias por elegirnos, ojalá encuentre lo que busca")
 }
-else if (tiendaEntera === 2) {
-    alert("Gracias por entrar a nuestra pagina");
+else if (bienvenida === 2) {
+    alert("Gracias por entrar a nuestra página");
 } else {
-    alert("Elija una opcion correcta");
+    alert("Elija una opción correcta");
 }
 
-if (carrito.length > 0) {
-    const opcionPago = parseInt(prompt("Si quiere abonar ingrese 1\nSi quiere seguir comprando ingrese 2"));
-    if (opcionPago === 1) {
-        const total = carrito.reduce((acc, el) => {
-            return acc + el.precio;
-        }, 0);
-        console.log("Productos en el carrito:");
-        console.log(carrito);
-        console.log(`El total de su compra es: $${total}`);
-        alert("Gracias por su compra.");
-    } else if (opcionPago === 2) {
-        console.log("Productos en el carrito:");
-        console.log(carrito);
-        alert("Continúe comprando.");
-    } else {
-        alert("Elija una opcion correcta");
-    }
-} else {
-    alert("No hay productos en el carrito.");
-}
+renderizarProductos(productos);
