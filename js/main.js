@@ -21,11 +21,9 @@ function guardarProductos() {
 
 function modificarCantidadProductos(productosCarrito, cantidad) {
     const agregarProductosCarrito = carrito.findIndex((el) => {
-        return el.nombre === productoCarrito.nombre;
+        return el.nombre === productosCarrito.nombre;
     });
-    if (agregarProductosCarrito !== -1) {
-        carrito[agregarProductosCarrito].cantidad = cantidad;
-    }
+    carrito[productosCarrito].cantidad = (productosCarrito !== -1) && cantidad;
     renderizarCarrito(carrito);
     guardarProductos();
 }
@@ -77,15 +75,12 @@ function agregarProductosAlCarrito(producto, cantidad) {
     const agregarProductosCarrito = carrito.findIndex((el) => {
         return el.nombre === producto.nombre;
     });
-    if (agregarProductosCarrito === -1) {
-        carrito.push({
-            nombre: producto.nombre,
-            precio: producto.precio,
-            cantidad: cantidad,
-        });
-    } else {
-        carrito[agregarProductosCarrito].cantidad += cantidad;
-    }
+    (indiceProductoCarrito === -1) ? carrito.push({
+        nombre: producto.nombre,
+        precio: producto.precio,
+        cantidad: cantidad,
+    }) : carrito[indiceProductoCarrito].cantidad += cantidad;
+
     renderizarCarrito(carrito);
     guardarProductos();
 }
@@ -94,9 +89,10 @@ function renderizarProductos(productos) {
     contenedor.innerHTML = "";
 
     for (const producto of productos) {
-        const div = document.createElement("div");
-        div.className = "producto";
-        div.innerHTML = `<h3>${producto.nombre}</h3>`;
+        const { nombre, precio } = productoCarrito;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${nombre}</td>
+            <td>$${precio}</td>`;
 
         const input = document.createElement("input");
         input.placeholder = "Cantidad";
@@ -141,3 +137,6 @@ else if (bienvenida === 2) {
 }
 
 renderizarProductos(productos);
+
+
+
